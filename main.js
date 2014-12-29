@@ -1,6 +1,7 @@
 var Spark   = require('spark');
 var Doorbot = require('./app/doorbot');
 var Keen    = require('keen.io');
+var Day     = require('./app/day');
 
 // Initialise Spark
 console.log('Initialising Spark API');
@@ -14,6 +15,14 @@ var kClient = Keen.configure({
     projectId: process.env.KEEN_PROJ_ID,
     writeKey:  process.env.KEEN_WRITE_KEY
 });
+
+// Set up the Day object with London location
+Day.init(51.5, -0.22);
+
+// Set up time loops
+setInterval(function() {
+    Day.check();
+}, 10000); // 10 second polling
 
 // Setup Doorbot
 console.log('Initialising Doorbot');
@@ -31,4 +40,18 @@ db.subscribe('door:close', function() {
             console.error('Error transmitting event door:close');
         }
     });
+});
+
+// On sunset/sunrise change light status
+Day.subscribe('change', function(status) {
+    switch(status) {
+        case Day.DayStatus.SUNRISE:
+        case Day.DayStatus.DAY:
+            db.setLightState(false);
+            break;
+        case Day.DayStatus.SUNSET:
+        case Day.DayStatus.NIGHT:
+            db.setLightState(true);
+            break;
+    }
 });
