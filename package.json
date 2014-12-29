@@ -1,14 +1,15 @@
 {
-    "name": "oikos-server",
-    "version": "0.1.0",
-    "description": "Home management server",
-    "main": "main.js",
-    "scripts": {
-        "preinstall": "bash deps.sh",
-        "start": "node main.js"
-    },
-    "author": "Gideon Farrell <me@gideonfarrell.co.uk>",
-    "license": "ISC",
-    "dependencies": {
-    }
+  "name": "oikos-server",
+  "version": "0.1.0",
+  "description": "Home management server",
+  "main": "main.js",
+  "scripts": {
+    "preinstall": "bash deps.sh",
+    "start": "node main.js"
+  },
+  "author": "Gideon Farrell <me@gideonfarrell.co.uk>",
+  "license": "ISC",
+  "dependencies": {
+    "spark": "^0.2.4"
+  }
 }
