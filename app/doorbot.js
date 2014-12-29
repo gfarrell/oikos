@@ -18,6 +18,8 @@ var Doorbot = function(device_id, options) {
     var self = this;
     this.o = _.defaults(options, defaults);
 
+    this.uuid = device_id;
+
     // Event callback
 
     // setup events
@@ -58,6 +60,23 @@ _.extend(Doorbot.prototype, {
     },
     doorClosed: function() {
         console.warn('Doorbot@doorClosed: not implemented.');
+    },
+
+    setLightState: function(state) {
+        var self = this;
+        state = state || false;
+
+        Spark.getDevice(this.uuid, function(err, device) {
+            if(err) {
+                throw new Error('Doorbot@setLightState: failed to get device ' + self.uuid);
+            } else {
+                device.callFunction('lights', (state ? 'on' : 'off'), function(err, data) {
+                    if(err) {
+                        throw new Error('Doorbot@setLightState: failed to set light state.');
+                    }
+                });
+            }
+        });
     }
 });
 
