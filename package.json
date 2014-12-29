@@ -10,9 +10,11 @@
   "author": "Gideon Farrell <me@gideonfarrell.co.uk>",
   "license": "ISC",
   "dependencies": {
+    "Enum": "git://github.com/gfarrell/enum.js",
     "event.js": "git://github.com/gfarrell/event.js",
     "keen.io": "^0.1.3",
     "lodash": "^2.4.1",
+    "moment": "^2.8.4",
     "spark": "^0.2.4",
     "suncalc": "^1.6.0"
   }
