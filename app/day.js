@@ -16,14 +16,13 @@ var Day = {
             lat: lat,
             lan: lan
         };
+
+        this.updateCalculations();
     },
 
     updateCalculations: function() {
         this.times = SunCalc.getTimes(new Date(), this.location.lat, this.location.lan);
-    },
-
-    daily: function() {
-        this.updateCalculations();
+        this.updated = moment();
     },
 
     check: function() {
@@ -48,7 +47,15 @@ var Day = {
         if(oldStatus != status) {
             this.publish('change', status, oldStatus);
         }
-    }
+
+        if(Math.abs(now.diff(this.updated, 'hours')) > 23) {
+            this.updateCalculations();
+        }
+    },
+
+    DayStatus: DayStatus
 };
 
 Vent.implementOn(Day);
+
+module.exports = Day;
