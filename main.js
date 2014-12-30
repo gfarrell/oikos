@@ -10,11 +10,11 @@ Spark.login({
 });
 
 // Initialise Keen
-// console.log('Initialising Keen');
-// var kClient = Keen.configure({
-//     projectId: process.env.KEEN_PROJ_ID,
-//     writeKey:  process.env.KEEN_WRITE_KEY
-// });
+console.log('Initialising Keen');
+var kClient = Keen.configure({
+    projectId: process.env.KEEN_PROJ_ID,
+    writeKey:  process.env.KEEN_WRITE_KEY
+});
 
 // Set up the Day object with London location
 var day = Day.instance();
