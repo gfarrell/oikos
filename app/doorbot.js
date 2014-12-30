@@ -1,16 +1,19 @@
-var Spark = require('spark');
-var Vent  = require('event.js');
-var _     = require('lodash');
+var Spark    = require('spark');
+var Vent     = require('event.js');
+var _        = require('lodash');
+var Doorbell = require('./doorbell');
 
 // Default options
 var defaults = {
-    events: ['door:open', 'door:close']
+    events:   ['door:open', 'door:close', 'doorbell'],
+    doorbell: Doorbell.sounds.OLD_FASHIONED
 };
 
 // Event mappings
 var events = {
     'door:open':  'doorOpened',
-    'door:close': 'doorClosed'
+    'door:close': 'doorClosed',
+    'doorbell':   'playDoorbell'
 };
 
 // Constructor
@@ -20,7 +23,8 @@ var Doorbot = function(device_id, options) {
 
     this.uuid = device_id;
 
-    // Event callback
+    // Setup doorbell
+    this.bell = new Doorbell(this.o.doorbell);
 
     // setup events
     Spark.getDevice(device_id, function(err, device) {
@@ -60,6 +64,9 @@ _.extend(Doorbot.prototype, {
     },
     doorClosed: function() {
         console.warn('Doorbot@doorClosed: not implemented.');
+    },
+    playDoorbell: function() {
+        this.bell.play();
     },
 
     setLightState: function(state) {
