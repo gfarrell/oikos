@@ -2,6 +2,7 @@ var Spark   = require('spark');
 var Doorbot = require('./app/doorbot');
 var Keen    = require('keen.io');
 var Day     = require('./app/day');
+var exec    = require('child_process').exec;
 
 // Initialise Spark
 console.log('Initialising Spark API');
@@ -24,6 +25,13 @@ day.init(51.5, -0.22);
 setInterval(function() {
     day.check();
 }, 10000); // 10 second polling
+
+// Set the volume on the soundcard to 100% (using Alsa)
+exec('amixer set Master 100 unmute', function(err, stdout, stderr) {
+    if(err) {
+        console.error('main: unable to set volume - ' + err);
+    }
+});
 
 // Setup Doorbot
 console.log('Initialising Doorbot');
