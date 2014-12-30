@@ -27,7 +27,7 @@ setInterval(function() {
 
 // Setup Doorbot
 console.log('Initialising Doorbot');
-var db = Doorbot.create(process.env.DOORBOT_UUID);
+var db = Doorbot.create(process.env.DOORBOT_UUID, {doorbell: process.env.DOORBELL_TYPE});
 db.subscribe('door:open', function() {
     kClient.addEvent('door', {'door': 'front', 'status': 'open'}, function(err, res) {
         if(err) {
