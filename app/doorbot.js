@@ -53,6 +53,8 @@ _.extend(Doorbot.prototype, {
         var methodName = events[eventName];
         var callback   = this[methodName];
 
+        console.log('Doorbot@sparkEvent: received ' + eventName + '.');
+
         if(_.isFunction(callback)) {
             callback.call(this, data);
         }
