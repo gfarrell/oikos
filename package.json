@@ -1,6 +1,6 @@
 {
   "name": "oikos-server",
-  "version": "0.5.3",
+  "version": "0.5.4",
   "description": "Home management server",
   "main": "main.js",
   "scripts": {

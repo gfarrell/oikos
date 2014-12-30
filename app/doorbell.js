@@ -8,6 +8,7 @@ var Doorbell = function(bellType) {
     bellType = bellType || Doorbell.sounds.STANDARD;
 
     this.type = bellType;
+    this.playing = false;
 };
 
 Doorbell.sounds = new Enum('STANDARD', 'OLD_FASHIONED', 'LARGE');
@@ -37,7 +38,19 @@ _.extend(Doorbell.prototype, {
     },
 
     play: function() {
-        this.loadFile().pipe(new Lame.Decoder()).pipe(new Speaker());
+        if(this.playing) return;
+
+        var self = this;
+        var speaker = new Speaker();
+
+        speaker.on('open', function() {
+            self.playing = true;
+        });
+        speaker.on('close', function() {
+            self.playing = false;
+        });
+
+        this.loadFile().pipe(new Lame.Decoder()).pipe(speaker);
     }
 });
 
