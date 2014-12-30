@@ -2,26 +2,43 @@ var SunCalc = require('suncalc');
 var Vent    = require('event.js');
 var Enum    = require('Enum');
 var moment  = require('moment');
+var _       = require('lodash');
 
-var DayStatus = new Enum(
+var Day = function() {
+    this.setPosition(0, 0);
+};
+var instance;
+
+Day.status =  new Enum(
     'NIGHT',
     'SUNRISE',
     'DAY',
     'SUNSET'
 );
 
-var Day = {
-    init: function(lat, lang) {
+Day.instance = function() {
+    if(typeof instance == 'undefined') {
+        instance = new Day();
+    }
+
+    return instance;
+};
+
+_.extend(Day.prototype, {
+    init: function(lat, lan) {
+        this.setPosition(lat, lan);
+        this.update();
+    },
+
+    setPosition: function(lat, lan) {
         this.position = {
             lat: lat,
             lan: lan
         };
-
-        this.updateCalculations();
     },
 
-    updateCalculations: function() {
-        this.times = SunCalc.getTimes(new Date(), this.location.lat, this.location.lan);
+    update: function() {
+        this.times = SunCalc.getTimes(new Date(), this.position.lat, this.position.lan);
         this.updated = moment();
     },
 
@@ -32,14 +49,14 @@ var Day = {
 
         if(Math.abs(now.diff(this.times.sunrise, 'minutes')) < 15) {
             // in sunrise bracket
-            status = DayStatus.SUNRISE;
+            status = Day.status.SUNRISE;
         } else if(Math.abs(now.diff(this.times.sunset, 'minutes')) < 15) {
             // in sunset bracket
-            status = DayStatus.SUNSET;
+            status = Day.status.SUNSET;
         } else if(now.isBefore(this.times.sunrise) || now.isAfter(this.times.sunset)) {
-            status = DayStatus.NIGHT;
+            status = Day.status.NIGHT;
         } else {
-            status = DayStatus.DAY;
+            status = Day.status.DAY;
         }
 
         this.status = status;
@@ -49,13 +66,11 @@ var Day = {
         }
 
         if(Math.abs(now.diff(this.updated, 'hours')) > 23) {
-            this.updateCalculations();
+            this.update();
         }
     },
+});
 
-    DayStatus: DayStatus
-};
-
-Vent.implementOn(Day);
+Vent.implementOn(Day.prototype);
 
 module.exports = Day;
