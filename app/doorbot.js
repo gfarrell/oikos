@@ -80,9 +80,16 @@ _.extend(Doorbot.prototype, {
     }
 });
 
+// Storage
+var doorbots = {};
+
 // Create method
 Doorbot.create = function(device_id, options) {
-    return new Doorbot(device_id, options || {});
+    if(!(_.has(doorbots, device_id) && doorbots[device_id] instanceof Doorbot)) {
+        doorbots[device_id] = new Doorbot(device_id, options || {});
+    }
+
+    return doorbots[device_id];
 };
 
 module.exports = Doorbot;
