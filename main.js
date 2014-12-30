@@ -1,8 +1,9 @@
-var Spark   = require('spark');
-var Doorbot = require('./app/doorbot');
-var Keen    = require('keen.io');
-var Day     = require('./app/day');
-var exec    = require('child_process').exec;
+var Spark    = require('spark');
+var Doorbot  = require('./app/doorbot');
+var Keen     = require('keen.io');
+var Day      = require('./app/day');
+var exec     = require('child_process').exec;
+var Doorbell = require('./app/doorbell');
 
 // Initialise Spark
 console.log('Initialising Spark API');
@@ -27,7 +28,7 @@ setInterval(function() {
 }, 10000); // 10 second polling
 
 // Set the volume on the soundcard to 100% (using Alsa)
-exec('amixer set Master 100 unmute', function(err, stdout, stderr) {
+exec('amixer set PCM 100% unmute', function(err, stdout, stderr) {
     if(err) {
         console.error('main: unable to set volume - ' + err);
     }
@@ -35,7 +36,7 @@ exec('amixer set Master 100 unmute', function(err, stdout, stderr) {
 
 // Setup Doorbot
 console.log('Initialising Doorbot');
-var db = Doorbot.create(process.env.DOORBOT_UUID, {doorbell: process.env.DOORBELL_TYPE});
+var db = Doorbot.create(process.env.DOORBOT_UUID, {doorbell: Doorbell.sounds[process.env.DOORBELL_TYPE]});
 db.subscribe('door:open', function() {
     kClient.addEvent('door', {'door': 'front', 'status': 'open'}, function(err, res) {
         if(err) {
