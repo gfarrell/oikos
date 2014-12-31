@@ -16,6 +16,7 @@
     "lame": "^1.1.1",
     "lodash": "^2.4.1",
     "moment": "^2.8.4",
+    "nodemailer": "^1.3.0",
     "spark": "^0.2.4",
     "speaker": "^0.2.1",
     "string": "git://github.com/gfarrell/string.js",
