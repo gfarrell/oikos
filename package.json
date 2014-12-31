@@ -18,6 +18,7 @@
     "moment": "^2.8.4",
     "spark": "^0.2.4",
     "speaker": "^0.2.1",
+    "string": "git://github.com/gfarrell/string.js",
     "suncalc": "^1.6.0"
   }
 }
