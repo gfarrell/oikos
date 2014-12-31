@@ -16,18 +16,47 @@ Config.instance = function() {
 };
 
 Config.init = function(type) {
-    if(__instance) throw new Error('Config::init: Config object has already been initialised.');
+    if(__instance && instance.type != type) throw new Error('Config::init: Config object has already been initialised with a different type.');
 
     __instance = new Config(type);
+
+    return Config;
 };
 
 _.extend(Config.prototype, {
     load: function(type) {
         this.type = type;
+        this.__cfg = {};
 
         switch(type) {
             case Config.type.ENV:
-                this.__cfg = process.env;
+                for(var key in process.env) {
+                    // only want env variables starting with OIKOS_
+                    if(key.indexOf('OIKOS_') !== 0) continue;
+
+                    // namespaces separated by "_"
+                    var parts = key.split('_');
+                    var dest = this.__cfg;
+                    var k;
+
+                    // Remove the OIKOS namespace
+                    parts.shift();
+
+                    while(parts.length > 1) {
+                        k = parts.shift();
+                        // create namespace if doesn't exist
+                        if(!_.has(dest, k)) {
+                            dest[k] = {};
+                        } else {
+                            // throw an error if this is not a namespace but a final value
+                            if(!_.isPlainObject(dest[k])) throw new Error('Config@load: ' + _.first(key.split('_'), parts.length + 1).join('.') + ' is not a namespace but of type ' + (typeof dest[k]) + '.');
+                        }
+
+                        dest = dest[k];
+                    }
+
+                    dest[parts[0]] = process.env[key];
+                }
                 break;
             case Config.type.FILE:
                 this.__cfg = require('../.env.json');
