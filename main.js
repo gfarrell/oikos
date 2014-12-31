@@ -4,19 +4,18 @@ var Keen     = require('keen.io');
 var Day      = require('./app/day');
 var exec     = require('child_process').exec;
 var Doorbell = require('./app/doorbell');
+var Config   = require('./app/config');
+
+// Initialise Configuration
+Config.init(process.env.OIKOS_isResin ? Config.type.ENV : Config.type.FILE);
 
 // Initialise Spark
 console.log('Initialising Spark API');
-Spark.login({
-    accessToken: process.env.SPARK_ACCESS_TOKEN
-});
+Spark.login(Config.get('spark'));
 
 // Initialise Keen
 console.log('Initialising Keen');
-var kClient = Keen.configure({
-    projectId: process.env.KEEN_PROJ_ID,
-    writeKey:  process.env.KEEN_WRITE_KEY
-});
+var kClient = Keen.configure(Config.get('keen'));
 
 // Set up the Day object with London location
 var day = Day.instance();
@@ -36,7 +35,7 @@ exec('amixer set PCM 100% unmute', function(err, stdout, stderr) {
 
 // Setup Doorbot
 console.log('Initialising Doorbot');
-var db = Doorbot.create(process.env.DOORBOT_UUID, {doorbell: Doorbell.sounds[process.env.DOORBELL_TYPE]});
+var db = Doorbot.create(Config.get('robots').doorbot.id, {doorbell: Doorbell.sounds[Config.get('robots').doorbot.bellType]});
 db.subscribe('door:open', function() {
     kClient.addEvent('door', {'door': 'front', 'status': 'open'}, function(err, res) {
         if(err) {
