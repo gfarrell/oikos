@@ -20,6 +20,7 @@
     "spark": "^0.2.4",
     "speaker": "^0.2.1",
     "string": "git://github.com/gfarrell/string.js",
-    "suncalc": "^1.6.0"
+    "suncalc": "^1.6.0",
+    "twilio": "^1.10.0"
   }
 }
