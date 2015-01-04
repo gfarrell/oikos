@@ -1,3 +1,5 @@
+"use strict";
+
 var _    = require('lodash');
 var Enum = require('Enum');
 require('string');
@@ -16,7 +18,9 @@ Config.instance = function() {
 };
 
 Config.init = function(type) {
-    if(__instance && instance.type != type) throw new Error('Config::init: Config object has already been initialised with a different type.');
+    if(__instance && __instance.type !== type) {
+        throw new Error('Config::init: Config object has already been initialised with a different type.');
+    }
 
     __instance = new Config(type);
 
@@ -32,7 +36,9 @@ _.extend(Config.prototype, {
             case Config.type.ENV:
                 for(var key in process.env) {
                     // only want env variables starting with OIKOS_
-                    if(key.indexOf('OIKOS_') !== 0) continue;
+                    if(key.indexOf('OIKOS_') !== 0) {
+                        continue;
+                    }
 
                     // namespaces separated by "_"
                     var parts = key.split('_');
@@ -49,7 +55,11 @@ _.extend(Config.prototype, {
                             dest[k] = {};
                         } else {
                             // throw an error if this is not a namespace but a final value
-                            if(!_.isPlainObject(dest[k])) throw new Error('Config@load: ' + _.first(key.split('_'), parts.length + 1).join('.') + ' is not a namespace but of type ' + (typeof dest[k]) + '.');
+                            if(!_.isPlainObject(dest[k])) {
+                                var ns = _.first(key.split('_'), parts.length + 1).join('.');
+                                var t  = typeof dest[k];
+                                throw new Error('Config@load: ' + ns + ' is not a namespace but of type ' + t + '.');
+                            }
                         }
 
                         dest = dest[k];
