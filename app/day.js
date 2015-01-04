@@ -1,3 +1,5 @@
+"use strict";
+
 var SunCalc = require('suncalc');
 var Vent    = require('event.js');
 var Enum    = require('Enum');
@@ -17,7 +19,7 @@ Day.status =  new Enum(
 );
 
 Day.instance = function() {
-    if(typeof instance == 'undefined') {
+    if(typeof instance === 'undefined') {
         instance = new Day();
     }
 
@@ -61,14 +63,14 @@ _.extend(Day.prototype, {
 
         this.status = status;
 
-        if(oldStatus != status) {
+        if(oldStatus !== status) {
             this.publish('change', status, oldStatus);
         }
 
         if(Math.abs(now.diff(this.updated, 'hours')) > 23) {
             this.update();
         }
-    },
+    }
 });
 
 Vent.implementOn(Day.prototype);
