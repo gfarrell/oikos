@@ -1,3 +1,5 @@
+"use strict";
+
 var Spark    = require('spark');
 var Vent     = require('event.js');
 var _        = require('lodash');
@@ -17,24 +19,21 @@ var events = {
 };
 
 // Constructor
-var Doorbot = function(device_id, options) {
+var Doorbot = function(deviceId, options) {
     var self = this;
     this.o = _.defaults(options, defaults);
 
-    this.uuid = device_id;
+    this.uuid = deviceId;
 
     // Setup doorbell
     this.bell = new Doorbell(this.o.doorbell);
 
     // setup events
-    Spark.getDevice(device_id, function(err, device) {
+    Spark.getDevice(deviceId, function(err, device) {
         if(err) {
-            throw new Error('Doorbot: unable to get device "' + device_id + '".');
+            throw new Error('Doorbot: unable to get device "' + deviceId + '".');
         } else {
             for(var e in events) {
-                var methodName = events[e];
-                var eventName  = e;
-
                 if(_.contains(self.o.events, e)) {
                     device.subscribe(e, self.sparkEvent.bind(self));
                 }
@@ -61,12 +60,15 @@ _.extend(Doorbot.prototype, {
 
         this.publish(eventName, data);
     },
+
     doorOpened: function() {
         console.warn('Doorbot@doorOpened: not implemented.');
     },
+
     doorClosed: function() {
         console.warn('Doorbot@doorClosed: not implemented.');
     },
+
     playDoorbell: function() {
         this.bell.play();
     },
@@ -79,7 +81,7 @@ _.extend(Doorbot.prototype, {
             if(err) {
                 throw new Error('Doorbot@setLightState: failed to get device ' + self.uuid);
             } else {
-                device.callFunction('lights', (state ? 'on' : 'off'), function(err, data) {
+                device.callFunction('lights', (state ? 'on' : 'off'), function(err/*, data*/) {
                     if(err) {
                         throw new Error('Doorbot@setLightState: failed to set light state.');
                     }
@@ -93,12 +95,12 @@ _.extend(Doorbot.prototype, {
 var doorbots = {};
 
 // Create method
-Doorbot.create = function(device_id, options) {
-    if(!(_.has(doorbots, device_id) && doorbots[device_id] instanceof Doorbot)) {
-        doorbots[device_id] = new Doorbot(device_id, options || {});
+Doorbot.create = function(deviceId, options) {
+    if(!(_.has(doorbots, deviceId) && doorbots[deviceId] instanceof Doorbot)) {
+        doorbots[deviceId] = new Doorbot(deviceId, options || {});
     }
 
-    return doorbots[device_id];
+    return doorbots[deviceId];
 };
 
 module.exports = Doorbot;
