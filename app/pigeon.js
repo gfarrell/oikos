@@ -1,3 +1,5 @@
+"use strict";
+
 var config     = require('./config').get('comms');
 var _          = require('lodash');
 var Enum       = require('Enum');
@@ -22,8 +24,8 @@ Pigeon.type = new Enum('EMAIL', 'SMS');
 _.extend(Pigeon.prototype, {
     send: function(message, options, callback) {
         var defaultOptions = {
-            subject:   'Message from Oikos',
-            //recipient: 'recipient email/number/etc.'
+            subject: 'Message from Oikos'
+            //recipient: 'email|phone' DO NOT SPECIFY HERE otherwise default option breaks
         };
         options = _.defaults(options, defaultOptions);
 
@@ -41,7 +43,9 @@ _.extend(Pigeon.prototype, {
                         console.error('Pigeon@send unable to send message: ' + err);
                     }
 
-                    if(_.isFunction(callback)) callback(err, info);
+                    if(_.isFunction(callback)) {
+                        callback(err, info);
+                    }
                 });
                 break;
             case Pigeon.type.SMS:
@@ -49,7 +53,7 @@ _.extend(Pigeon.prototype, {
                     from: config.sms.sender,
                     to: options.recipient || config.sms.recipient,
                     body: message
-                }, function(err, message) {
+                }, function(err/*, message*/) {
                     if(err) {
                         console.error('Pigeon@send unable to send message: ' + err);
                     }
